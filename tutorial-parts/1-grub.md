@@ -6,7 +6,7 @@ This all assumes you are running on macOS. If you are using Linux, I imagine you
 
 # Tooling
 
-We'll need two bits of software installed to proceed. I got them installed using homebrew.
+We'll need two bits of software installed to proceed. I got them installed using homebrew. If on Windows, use [WSL](#wsl).
 
     brew install qemu
     brew install xorriso
@@ -15,7 +15,7 @@ We'll need two bits of software installed to proceed. I got them installed using
 
 This is interesting just to test out QEMU and GRUB. This can be handy for using the GRUB cli to check out machine details. It's also nice just to verify that you have a working QEMU setup. I had a really tough time building GRUB from source, and I struggled to find binaries. They actually are available via [ftp](https://alpha.gnu.org/gnu/grub/), but I've included them here, so you can follow along without needed to leave the terminal.
 
-Here's how you build a basic bootable floppy. Note that we need to make sure to set the block size (bs) to 512 bytes. For stage one, we're telling DD to copy only 1 block worth of data. In this case, stage1 is exactly 512 bytes. I believe this is a requirement of the BIOS floppy boot system. stage2 is positioned immediately after (seek'ing 1 block in).
+Here's how you build a basic bootable floppy. Note that we need to make sure to set the block size (bs) to 512 bytes. For stage one, we're telling `dd` to copy only 1 block worth of data. In this case, stage1 is exactly 512 bytes. I believe this is a requirement of the BIOS floppy boot system. stage2 is positioned immediately after (seeking 1 block in).
 
     mkdir build
 
@@ -74,3 +74,28 @@ You can build the ISO with rake as well. Check it:
 It's not much, but there you go. GRUB running in QEMU. I found this quite difficult to get going myself. If you try it and run into problems, please open up an issue so I can have a look.
 
 In the future, I'd love to expand this tutorial to cover EFI as well as GRUB2.
+
+<h2 id='wsl'>Using WSL</h2>
+< install wsl with the linux-distro of your choice >  
+
+Use the package manager used by your linux distro, the following example will use [`Arch`](https://github.com/yuk7/ArchWSL/).
+```
+sudo pacman -S xorriso
+```
+(**A piece of Advice:** Don't install qemu.)  
+Install [QEMU](https://www.qemu.org/download/) on your host (Windows) OS.  
+Next steps:
+1. Copy the path to where qemu is installed.
+2. Add the path to the linux path. (It should be the same for all distros).  
+   Use the following commands to add to path (Use the linux eqivalent path, like converting \ -> / and **changing the Drive letter with the colon to `/mnt/<drive letter>/`**:  
+   ```
+   echo 'export PATH="$PATH:<the revised path>"' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+   
+Next, instead of using `qemu-system-x86_64`, use `qemu-system-x86_64.exe`(Indicating its a Windows command). This will open qemu on your host (Windows) OS.  
+
+
+If you do not want to do it this way, you have to use GUI on WSL, which is only available on some distos (Like Kali Linux) and uses WSL2 + It will use a lot of resouces and you won't get the full potential of your machine.  
+
+In my case, my host OS had 4GB ram & 4 cores i3 processor, the GUI (Kali Linux) in which I booted into had some 1.5GB ram ( + 700MiB of it was occupied by the process itself) and my 2nd & 4th cores were always on 100% and the environment itself was very laggy (I blame my hardware).
